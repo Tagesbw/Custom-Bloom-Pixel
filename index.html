@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Custom Bloom Shaders in Minecraft</title>
+  <style>
+    :root {
+      --bg: #ffffff;
+      --text: #1a1a1a;
+      --accent: #161616;
+      --card: #f2f2f2;
+    }
+
+    .dark-theme {
+      --bg: #121212;
+      --text: #f2f2f2;
+      --accent: #161616;
+      --card: #1e1e1e;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      transition: all 0.3s ease;
+    }
+
+    header {
+  background: var(--accent);
+  color: white;
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.floating-download {
+  position: fixed;
+  top: 80px;
+  right: 20px;
+  background: var(--card);
+  padding: 1rem;
+  border-radius: 12px;
+  box-shadow: 0 0 15px rgba(0,0,0,0.3);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 9999;
+  width: 260px;
+  text-align: center;
+}
+
+.floating-download img {
+  width: 208px;
+  height: 208px;
+  margin-bottom: 0.5rem;
+}
+
+.floating-text {
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+  color: var(--text);
+}
+
+.download-button {
+  background: #f122e0;
+  color: white;
+  text-decoration: none;
+  padding: 0.4rem 1rem;
+  border-radius: 8px;
+  font-weight: bold;
+  transition: background 0.3s ease;
+}
+
+.download-button:hover {
+  background: #d018c2;
+}
+
+    .theme-toggle {
+      cursor: pointer;
+      padding: 0.5rem 1rem;
+      background: white;
+      color: var(--accent);
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+    }
+
+    main {
+      padding: 2rem;
+      max-width: 800px;
+      margin: auto;
+    }
+
+    h1, h2 {
+      font-size: 1.8rem;
+      margin-bottom: 1rem;
+    }
+
+    .card {
+      background: var(--card);
+      padding: 1.5rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      margin-bottom: 2rem;
+    }
+
+    .gradient-text {
+  background: linear-gradient(90deg, #f122e0, #ff9800);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+header div {
+  font-size: 1.5rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+
+    code {
+      background: rgba(0,0,0,0.05);
+      padding: 0.2rem 0.4rem;
+      border-radius: 4px;
+      font-family: monospace;
+    }
+
+    ul {
+      line-height: 2.0;
+    }
+
+    ul ul {
+      margin-left: 1.5rem;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+    }
+
+    th, td {
+      padding: 10px;
+      text-align: left;
+    }
+
+    th {
+      background: var(--accent);
+      color: white;
+    }
+
+    tr:nth-child(even) {
+      background-color: rgba(0, 0, 0, 0.05);
+    }
+
+    .color-red { color: #e53935; }
+    .color-dark-red { color: #8b0000; }
+    .color-orange { color: #fb8c00; }
+    .color-dark-orange { color: #a04d00; }
+    .color-yellow { color: #fdd835; }
+    .color-dark-yellow { color: #aaa500; }
+    .color-green { color: #43a047; }
+    .color-dark-green { color: #2e7d32; }
+    .color-cyan { color: #00acc1; }
+    .color-dark-cyan { color: #007c91; }
+    .color-blue { color: #1e88e5; }
+    .color-dark-blue { color: #1565c0; }
+    .color-purple { color: #8e24aa; }
+    .color-dark-purple { color: #5e35b1; }
+    .color-pink { color: #ec407a; }
+    .color-dark-pink { color: #ad1457; }
+    .color-gray { color: #757575; }
+    .color-dark-gray { color: #424242; }
+    .color-white { color: #eeeeee; }
+    .color-black { color: #333333; }
+
+    .screenshot {
+      width: 100%;
+      max-width: 100%;
+      border-radius: 12px;
+      margin-top: 1rem;
+      box-shadow: 0 0 10px rgba(0,0,0,0.4);
+    }
+  </style>
+</head>
+<body class="dark-theme">
+  <header>
+    <div>
+      <span class="gradient-text">🌟RayShaders</span> Custom Bloom Pixel
+    </div>
+    <button class="theme-toggle" onclick="toggleTheme()">Сменить тему</button>
+  </header>
+
+  <main>
+    <div class="card">
+      <h1>📌 О шейдере</h1>
+      <p>
+        Ванильный шейдер, который позволяет добавить свой <strong>bloom</strong> эффект в Minecraft <em>без</em> использования OptiFine, Forge, Fabric и других модов. Всё реализовано через ресурспак.
+      </p>
+      <img src="screen1.png" alt="Пример эффекта bloom в Minecraft" class="screenshot">
+    </div>
+
+    <div class="card">
+      <h2>📋 Что нужно сделать:</h2>
+      <ul>
+        <li>Скачать ресурспак</li>
+        <li>Закинуть его файлы в ваш ресурспак, или просто установить в Minecraft</li>
+        <li>Следуя инструкции, добавьте bloom пиксель на любой объект</li>
+        <li>Включите «Настройки графики → Графика: ПОТРЯСАЮЩАЯ»</li>
+        <li>Наслаждайтесь bloom-эффектом!</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>✨ Как сделать Bloom:</h2>
+      <p>
+        Чтобы создать bloom-эффект на вашей текстуре или модельке, просто следуйте этим шагам:
+      </p>
+      <p>
+        1. Зайди в любой графический редактор. Желательно который ресует пиксель-арты, для точности.
+      </p>
+      <p>
+        2. Чтобы пиксель был читаем шейдером, установите его <strong>прозрачность ровно на 100</strong>:
+        <img src="screen2.png" alt="Где менять прозрачность и цвет" class="screenshot">
+      </p>
+      <p>
+        3. После того как вы установили прозрачноть на <strong>100</strong> вы должны выбрать цвет и силу свечения для пикселя. Что бы выставить нужные параметры, зайдите в настройки цвета (RGB) и выставьте нужные параметры:
+      </p>
+      <ul>
+        <li><strong>R (Красный)</strong> — Отвечает за 🕳️ничего.</li>
+        <li><strong>G (зелёный)</strong> — Отвечает за 🎨цвет свечения, установите число взависимости от того какой цвет вы хотите себе *список цветов ниже*</li>
+        <li><strong>B (синий)</strong> — Отвечает за 💪силу свечения, от 1 до 255 чем больше число, тем сильнее и ярче будет блум эффект.</li>
+        <img src="screen3.png" alt="Где вставлять значения R G B" class="screenshot">
+      </ul>
+      <p>4. После этого вокруг пикселя создаётся блум эффект с тем цветом, и яркостю, которые вы задали.</p>
+      <img src="screen4.png" alt="Где вставлять значения R G B" class="screenshot">
+    </div>
+
+    <div class="card">
+      <h2>🎨 Доступные цвета для bloom:</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Название</th>
+            <th>Цвет G</th>
+          </tr>
+        </thead>
+        <tbody>
+          
+          <tr><td class="color-red">Красный</td><td>0</td></tr>
+          <tr><td class="color-dark-red">Тёмно-красный</td><td>1</td></tr>
+          <tr><td class="color-orange">Оранжевый</td><td>2</td></tr>
+          <tr><td class="color-dark-orange">Тёмно-оранжевый</td><td>3</td></tr>
+          <tr><td class="color-yellow">Жёлтый</td><td>4</td></tr>
+          <tr><td class="color-dark-yellow">Тёмно-жёлтый</td><td>5</td></tr>
+          <tr><td class="color-green">Зелёный</td><td>6</td></tr>
+          <tr><td class="color-dark-green">Тёмно-зелёный</td><td>7</td></tr>
+          <tr><td class="color-cyan">Голубой</td><td>8</td></tr>
+          <tr><td class="color-dark-cyan">Тёмно-голубой</td><td>9</td></tr>
+          <tr><td class="color-blue">Синий</td><td>10</td></tr>
+          <tr><td class="color-dark-blue">Тёмно-синий</td><td>11</td></tr>
+          <tr><td class="color-purple">Фиолетовый</td><td>12</td></tr>
+          <tr><td class="color-dark-purple">Тёмно-фиолетовый</td><td>13</td></tr>
+          <tr><td class="color-pink">Розовый</td><td>14</td></tr>
+          <tr><td class="color-dark-pink">Тёмно-розовый</td><td>15</td></tr>
+          <tr><td class="color-gray">Серый</td><td>16</td></tr>
+          <tr><td class="color-dark-gray">Тёмно-серый</td><td>17</td></tr>
+          <tr><td class="color-white">Белый</td><td>18</td></tr>
+          <tr><td class="color-black">Чёрный (отключено)</td><td>19</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <h2>🔧 Если вдруг проблемы...</h2>
+      <ul>
+        <li>❗ Убедитесь, что включена <strong>графика: ПОТРЯСАЮЩЕ!</strong></li>
+        <li>❗ <strong>Bloom работает только в мире на [предметы, блоки, item_display, block_display]</strong> [инвентарь, сундуки и другие интерфейсы] — не будет работать.</li>
+        <li>❗ Пиксель должен иметь <strong>ровно 100 из 255 прозрачности</strong>. Чтобы это гарантировать:
+          <ul>
+            <li>Сначала удалите этот пиксель полностью</li>
+            <li>Затем заново поставьте пиксель с прозрачностью ровно <code>100</code></li>
+          </ul>
+        </li>
+        <li>❗ Если у вас <strong>низкий FPS</strong> — откройте файл:<br />
+          <code>minecraft/shaders/program/rayshaders_bloom.fsh</code><br />
+          и на 25 строке замените:<br />
+          <code>const int Ranges = 6;</code><br />
+          на, например, <code>const int Ranges = 4;</code> — это уменьшит радиус, но увеличит производительность.
+        </li>
+        <li>❓ Остались вопросы или баги? Напиши мне в Discord: <strong>tagesbw</strong></li>
+      </ul>
+    </div>
+  </main>
+
+  <script>
+    function toggleTheme() {
+      document.body.classList.toggle("dark-theme");
+    }
+  </script>
+
+<div class="floating-download">
+  <img src="icon_large.png" alt="Превью ресурсов" />
+  <div class="floating-text">Скачать<br><strong>[1.20.5+] BloomPixel</strong></div>
+  <a href="RayShaders_Bloom.zip" download class="download-button">Скачать</a>
+</div>
+
+</body>
+</html>
